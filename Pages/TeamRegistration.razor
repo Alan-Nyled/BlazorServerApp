@@ -1,0 +1,78 @@
+﻿@page "/teamregistration"
+@using BlazorServerApp.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext DbContext
+
+@if (teams.Any())
+{
+    <h5>Teams i DB</h5>
+    <ul>
+    @foreach (var team in teams)
+    {
+        <li>@team.Name</li>
+    }
+    </ul>
+}
+
+<h3>Opret nyt Team</h3>
+
+<EditForm Model="@team" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <InputText id="name" class="form-control" @bind-Value="team.Name" />
+    </div>
+
+  
+
+    <button type="submit" class="btn btn-primary mt-2">Register Team</button>
+</EditForm>
+
+@if (isSuccessful)
+{
+    <div class="alert alert-success mt-4" role="alert">
+        Team registered successfully!
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-4" role="alert">
+        @errorMessage
+    </div>
+}
+
+@code {
+    private List<Team> teams = new List<Team>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        teams = await DbContext.Teams.ToListAsync();
+    }
+    private Team team = new Team();
+    private bool isSuccessful = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            DbContext.Teams.Add(team);
+            await DbContext.SaveChangesAsync();
+            isSuccessful = true;
+            errorMessage = string.Empty;
+
+            // Optionally, reset the form if you want to allow more entries
+            team = new Team();           
+            // NavigationManager.NavigateTo("successPageUrl", true);
+        }
+        catch (Exception ex)
+        {
+            isSuccessful = false;
+            errorMessage = "An error occurred while registering the team. Please try again.";
+        }
+    }
+}
+
