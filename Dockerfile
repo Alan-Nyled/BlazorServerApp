@@ -9,16 +9,16 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
 # Kopier .csproj-filer og gendan afhængigheder
-COPY ["YourBlazorApp/YourBlazorApp.csproj", "YourBlazorApp/"]
-RUN dotnet restore "YourBlazorApp/YourBlazorApp.csproj"
+COPY ["BlazorServerApp/BlazorServerApp.csproj", "BlazorServerApp/"]
+RUN dotnet restore "BlazorServerApp/BlazorServerApp.csproj"
 
 # Kopier resten af koden og byg applikationen
 COPY . .
-WORKDIR "/src/YourBlazorApp"
+WORKDIR "/src/BlazorServerApp"
 RUN dotnet publish -c Release -o /app/publish
 
 # Final-billede
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "YourBlazorApp.dll"]
+ENTRYPOINT ["dotnet", "BlazorServerApp.dll"]
