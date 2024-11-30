@@ -8,13 +8,12 @@ ENV ASPNETCORE_URLS=http://+:8080
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
-# Kopier .csproj-filer og gendan afhængigheder
-COPY ["BlazorServerApp/BlazorServerApp.csproj", "BlazorServerApp/"]
-RUN dotnet restore "BlazorServerApp/BlazorServerApp.csproj"
+# Kopier .csproj-filen og gendan afhængigheder
+COPY ["BlazorServerApp.csproj", "./"]
+RUN dotnet restore "./BlazorServerApp.csproj"
 
 # Kopier resten af koden og byg applikationen
 COPY . .
-WORKDIR "/src/BlazorServerApp"
 RUN dotnet publish -c Release -o /app/publish
 
 # Final-billede
