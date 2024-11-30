@@ -50,8 +50,7 @@ namespace BlazorServerApp
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            // Use HTTPS redirection (important for handling secure connections correctly)
-            app.UseHttpsRedirection();
+            // HTTPS Redirection fjernet for at undgå konflikt med Google Cloud Run's load balancer.
 
             app.UseStaticFiles();
 
